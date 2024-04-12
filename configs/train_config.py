@@ -5,13 +5,13 @@ from transforms import presets
 from optimizer import param_dict
 
 # Commonly changed training configurations
-num_epochs = 12   # train epochs
-batch_size = 2    # total_batch_size = #GPU x batch_size
-num_workers = 4   # workers for pytorch DataLoader
-pin_memory = True # whether pin_memory for pytorch DataLoader
-print_freq = 50   # frequency to print logs
+num_epochs = 12  # train epochs
+batch_size = 2  # total_batch_size = #GPU x batch_size
+num_workers = 4  # workers for pytorch DataLoader
+pin_memory = True  # whether pin_memory for pytorch DataLoader
+print_freq = 50  # frequency to print logs
 starting_epoch = 0
-max_norm = 0.1    # clip gradient norm
+max_norm = 0.1  # clip gradient norm
 
 output_dir = None  # path to save checkpoints, default for None: checkpoints/{model_name}
 find_unused_parameters = False  # useful for debugging distributed training
@@ -37,7 +37,7 @@ model_path = "configs/salience_detr/salience_detr_resnet50_800_1333.py"
 # specify a checkpoint folder to resume, or a pretrained ".pth" to finetune, for example:
 # checkpoints/salience_detr_resnet50_800_1333/train/2024-03-22-09_38_50
 # checkpoints/salience_detr_resnet50_800_1333/train/2024-03-22-09_38_50/best_ap.pth
-resume_from_checkpoint = None  
+resume_from_checkpoint = None
 
 learning_rate = 1e-4  # initial learning rate
 optimizer = optim.AdamW(lr=learning_rate, weight_decay=1e-4, betas=(0.9, 0.999))

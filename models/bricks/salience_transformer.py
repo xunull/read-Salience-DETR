@@ -49,15 +49,15 @@ class MaskPredictor(nn.Module):
 
 class SalienceTransformer(TwostageTransformer):
     def __init__(
-        self,
-        encoder: nn.Module,
-        neck: nn.Module,
-        decoder: nn.Module,
-        num_classes: int,
-        num_feature_levels: int = 4,
-        two_stage_num_proposals: int = 900,
-        level_filter_ratio: Tuple = (0.25, 0.5, 1.0, 1.0),
-        layer_filter_ratio: Tuple = (1.0, 0.8, 0.6, 0.6, 0.4, 0.2),
+            self,
+            encoder: nn.Module,
+            neck: nn.Module,
+            decoder: nn.Module,
+            num_classes: int,
+            num_feature_levels: int = 4,
+            two_stage_num_proposals: int = 900,
+            level_filter_ratio: Tuple = (0.25, 0.5, 1.0, 1.0),
+            layer_filter_ratio: Tuple = (1.0, 0.8, 0.6, 0.6, 0.4, 0.2),
     ):
         super().__init__(num_feature_levels, encoder.embed_dim)
         # model parameters
@@ -95,13 +95,13 @@ class SalienceTransformer(TwostageTransformer):
         self.alpha.data.uniform_(-0.3, 0.3)
 
     def forward(
-        self,
-        multi_level_feats,
-        multi_level_masks,
-        multi_level_pos_embeds,
-        noised_label_query,
-        noised_box_query,
-        attn_mask,
+            self,
+            multi_level_feats,
+            multi_level_masks,
+            multi_level_pos_embeds,
+            noised_label_query,
+            noised_box_query,
+            attn_mask,
     ):
         # get input for encoder
         feat_flatten = self.flatten_multi_level(multi_level_feats)
@@ -185,9 +185,9 @@ class SalienceTransformer(TwostageTransformer):
         if self.neck is not None:
             feat_unflatten = memory.split(spatial_shapes.prod(-1).unbind(), dim=1)
             feat_unflatten = dict((
-                i,
-                feat.transpose(1, 2).contiguous().reshape(-1, self.embed_dim, *spatial_shape),
-            ) for i, (feat, spatial_shape) in enumerate(zip(feat_unflatten, spatial_shapes)))
+                                      i,
+                                      feat.transpose(1, 2).contiguous().reshape(-1, self.embed_dim, *spatial_shape),
+                                  ) for i, (feat, spatial_shape) in enumerate(zip(feat_unflatten, spatial_shapes)))
             feat_unflatten = list(self.neck(feat_unflatten).values())
             memory = torch.cat([feat.flatten(2).transpose(1, 2) for feat in feat_unflatten], dim=1)
 
@@ -248,7 +248,7 @@ class SalienceTransformer(TwostageTransformer):
 
     @torch.no_grad()
     def nms_on_topk_index(
-        self, topk_scores, topk_index, spatial_shapes, level_start_index, iou_threshold=0.3
+            self, topk_scores, topk_index, spatial_shapes, level_start_index, iou_threshold=0.3
     ):
         batch_size, num_topk = topk_scores.shape
         if torchvision._is_tracing():
@@ -297,16 +297,16 @@ class SalienceTransformer(TwostageTransformer):
 
 class SalienceTransformerEncoderLayer(nn.Module):
     def __init__(
-        self,
-        embed_dim=256,
-        d_ffn=1024,
-        dropout=0.1,
-        n_heads=8,
-        activation=nn.ReLU(inplace=True),
-        n_levels=4,
-        n_points=4,
-        # focus parameter
-        topk_sa=300,
+            self,
+            embed_dim=256,
+            d_ffn=1024,
+            dropout=0.1,
+            n_heads=8,
+            activation=nn.ReLU(inplace=True),
+            n_levels=4,
+            n_points=4,
+            # focus parameter
+            topk_sa=300,
     ):
         super().__init__()
         self.embed_dim = embed_dim
@@ -351,17 +351,17 @@ class SalienceTransformerEncoderLayer(nn.Module):
         return query
 
     def forward(
-        self,
-        query,
-        query_pos,
-        value,  # focus parameter
-        reference_points,
-        spatial_shapes,
-        level_start_index,
-        query_key_padding_mask=None,
-        # focus parameter
-        score_tgt=None,
-        foreground_pre_layer=None,
+            self,
+            query,
+            query_pos,
+            value,  # focus parameter
+            reference_points,
+            spatial_shapes,
+            level_start_index,
+            query_key_padding_mask=None,
+            # focus parameter
+            score_tgt=None,
+            foreground_pre_layer=None,
     ):
         mc_score = score_tgt.max(-1)[0] * foreground_pre_layer
         select_tgt_index = torch.topk(mc_score, self.topk_sa, dim=1)[1]
@@ -414,6 +414,7 @@ class SalienceTransformerEncoder(nn.Module):
             if hasattr(layer, "init_weights"):
                 layer.init_weights()
 
+    # Deformable DETR 生成点位
     @staticmethod
     def get_reference_points(spatial_shapes, valid_ratios, device):
         reference_points_list = []
@@ -432,19 +433,20 @@ class SalienceTransformerEncoder(nn.Module):
         return reference_points
 
     def forward(
-        self,
-        query,
-        spatial_shapes,
-        level_start_index,
-        valid_ratios,
-        query_pos=None,
-        query_key_padding_mask=None,
-        # salience input
-        foreground_score=None,
-        focus_token_nums=None,
-        foreground_inds=None,
-        multi_level_masks=None,
+            self,
+            query,
+            spatial_shapes,
+            level_start_index,
+            valid_ratios,
+            query_pos=None,
+            query_key_padding_mask=None,
+            # salience input
+            foreground_score=None,
+            focus_token_nums=None,
+            foreground_inds=None,
+            multi_level_masks=None,
     ):
+        # 生成点位
         reference_points = self.get_reference_points(spatial_shapes, valid_ratios, device=query.device)
         b, n, s, p = reference_points.shape
         ori_reference_points = reference_points
@@ -499,14 +501,14 @@ class SalienceTransformerEncoder(nn.Module):
 
 class SalienceTransformerDecoderLayer(nn.Module):
     def __init__(
-        self,
-        embed_dim=256,
-        d_ffn=1024,
-        n_heads=8,
-        dropout=0.1,
-        activation=nn.ReLU(inplace=True),
-        n_levels=4,
-        n_points=4,
+            self,
+            embed_dim=256,
+            d_ffn=1024,
+            n_heads=8,
+            dropout=0.1,
+            activation=nn.ReLU(inplace=True),
+            n_levels=4,
+            n_points=4,
     ):
         super().__init__()
         self.embed_dim = embed_dim
@@ -550,15 +552,15 @@ class SalienceTransformerDecoderLayer(nn.Module):
         return tgt
 
     def forward(
-        self,
-        query,
-        query_pos,
-        reference_points,
-        value,
-        spatial_shapes,
-        level_start_index,
-        self_attn_mask=None,
-        key_padding_mask=None,
+            self,
+            query,
+            query_pos,
+            reference_points,
+            value,
+            spatial_shapes,
+            level_start_index,
+            self_attn_mask=None,
+            key_padding_mask=None,
     ):
         # self attention
         query_with_pos = key_with_pos = self.with_pos_embed(query, query_pos)
@@ -624,15 +626,15 @@ class SalienceTransformerDecoder(nn.Module):
             nn.init.constant_(bbox_head.layers[-1].bias, 0.0)
 
     def forward(
-        self,
-        query,
-        reference_points,
-        value,
-        spatial_shapes,
-        level_start_index,
-        valid_ratios,
-        key_padding_mask=None,
-        attn_mask=None,
+            self,
+            query,
+            reference_points,
+            value,
+            spatial_shapes,
+            level_start_index,
+            valid_ratios,
+            key_padding_mask=None,
+            attn_mask=None,
     ):
         outputs_classes = []
         outputs_coords = []
@@ -665,6 +667,7 @@ class SalienceTransformerDecoder(nn.Module):
             if layer_idx == self.num_layers - 1:
                 break
 
+            # 坐标修正
             # iterative bounding box refinement
             reference_points = self.bbox_head[layer_idx](query) + inverse_sigmoid(reference_points.detach())
             reference_points = reference_points.sigmoid()

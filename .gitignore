@@ -163,3 +163,5 @@ cython_debug/
 data/
 checkpoints/
 visualization/
+
+.idea

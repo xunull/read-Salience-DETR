@@ -29,10 +29,13 @@ num_heads = 8
 dim_feedforward = 2048
 
 # instantiate model components
-position_embedding = PositionEmbeddingSine(embed_dim // 2, temperature=10000, normalize=True, offset=-0.5)
+position_embedding = PositionEmbeddingSine(embed_dim // 2,
+                                           temperature=10000,
+                                           normalize=True, offset=-0.5)
 
 backbone = ResNetBackbone(
-    "resnet50", norm_layer=FrozenBatchNorm2d, return_indices=(1, 2, 3), freeze_indices=(0,)
+    "resnet50", norm_layer=FrozenBatchNorm2d,
+    return_indices=(1, 2, 3), freeze_indices=(0,)
 )
 
 neck = ChannelMapper(
@@ -54,6 +57,7 @@ transformer = SalienceTransformer(
         ),
         num_layers=transformer_enc_layers,
     ),
+    # 论文中提到的
     neck=RepVGGPluXNetwork(
         in_channels_list=neck.num_channels,
         out_channels_list=neck.num_channels,
