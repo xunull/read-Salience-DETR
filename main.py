@@ -33,7 +33,9 @@ def parse_args():
         "between fp16 and bf16 (bfloat16). Bf16 requires PyTorch >= 1.10."
         "and an Nvidia Ampere GPU.",
     )
-    parser.add_argument("--accumulate-steps", type=int, default=1, help="Steps to accumulate gradients")
+    parser.add_argument(
+        "--accumulate-steps", type=int, default=1, help="Steps to accumulate gradients"
+    )
     parser.add_argument("--seed", type=int, help="Random seed")
     parser.add_argument("--use-deterministic-algorithms", action="store_true")
     dynamo_backend = ["no", "eager", "aot_eager", "inductor", "aot_ts_nvfuser", "nvprims_nvfuser"]
@@ -67,7 +69,8 @@ def train():
                 output_dir = os.path.join(cfg.resume_from_checkpoint, "checkpoints")
                 folders = [os.path.join(output_dir, folder) for folder in os.listdir(output_dir)]
                 folders.sort(
-                    key=lambda folder: list(map(int, re.findall(r"[\/]?([0-9]+)(?=[^\/]*$)", folder)))[0]
+                    key=lambda folder:
+                    list(map(int, re.findall(r"[\/]?([0-9]+)(?=[^\/]*$)", folder)))[0]
                 )
                 cfg.resume_from_checkpoint = folders[-1]
 
@@ -135,7 +138,7 @@ def train():
     model, optimizer, train_loader, test_loader, lr_scheduler = accelerator.prepare(
         model, optimizer, train_loader, test_loader, lr_scheduler
     )
-    if getattr(cfg, "resume_from_checkpoint", None):
+    if getattr(cfg, "resume_from_checkpoint", None) is not None:
         if os.path.isdir(str(cfg.resume_from_checkpoint)):
             accelerator.load_state(cfg.resume_from_checkpoint)
             path = os.path.basename(cfg.resume_from_checkpoint)
@@ -146,7 +149,11 @@ def train():
             checkpoint = load_checkpoint(cfg.resume_from_checkpoint)
             checkpoint = checkpoint["model"] if "model" in checkpoint else checkpoint
             load_state_dict(accelerator.unwrap_model(model), checkpoint)
-            logger.info(f"load pretrained from {cfg.resume_from_checkpoint}, output_dir is {cfg.output_dir}")
+            # overwrite _classes_ in checkpoint with current datasets categories
+            model.register_buffer("_classes_", torch.tensor(encode_labels(classes)))
+            logger.info(
+                f"load pretrained from {cfg.resume_from_checkpoint}, output_dir is {cfg.output_dir}"
+            )
         else:
             logger.warn("resume_from_checkpoint is not a path or a file, skip loading")
     else:
