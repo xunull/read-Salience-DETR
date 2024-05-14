@@ -32,6 +32,7 @@ test_dataset = CocoDetection(
 )
 
 # model config to train
+# resnet50
 model_path = "configs/salience_detr/salience_detr_resnet50_800_1333.py"
 
 # specify a checkpoint folder to resume, or a pretrained ".pth" to finetune, for example:
