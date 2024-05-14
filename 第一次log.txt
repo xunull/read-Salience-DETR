@@ -1,0 +1,198 @@
+import sys; print('Python %s on %s' % (sys.version, sys.platform))
+/home/xunull/anaconda3/bin/conda run -n salience_detr --no-capture-output python /home/xunull/.pycharm_helpers/pydev/pydevd.py --multiprocess --qt-support=auto --client 127.0.0.1 --port 40315 --file /mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/main.py
+Connected to pydev debugger (build 241.15989.155)
+loading annotations into memory...
+Done (t=23.43s)
+creating index...
+index created!
+loading annotations into memory...
+Done (t=0.41s)
+creating index...
+index created!
+An exception occurred in telemetry logging.Disabling telemetry to prevent further exceptions.
+Traceback (most recent call last):
+  File "/home/xunull/anaconda3/envs/salience_detr/lib/python3.8/site-packages/iopath/common/file_io.py", line 946, in __log_tmetry_keys
+    handler.log_event()
+  File "/home/xunull/anaconda3/envs/salience_detr/lib/python3.8/site-packages/iopath/common/event_logger.py", line 97, in log_event
+    del self._evt
+AttributeError: _evt
+[2024-05-15 07:24:14 det.util.misc]: Rank of current process: 0, World size: 1
+[2024-05-15 07:24:17 det.util.misc]: Environment info:
+-------------------------------  -----------------------------------------------------------------------------------------
+sys.platform                     linux
+Python                           3.8.19 (default, Mar 20 2024, 19:58:24) [GCC 11.2.0]
+numpy                            1.24.3
+PyTorch                          1.11.0 @/home/xunull/anaconda3/envs/salience_detr/lib/python3.8/site-packages/torch
+PyTorch debug build              False
+torch._C._GLIBCXX_USE_CXX11_ABI  False
+GPU available                    Yes
+GPU 0                            NVIDIA GeForce RTX 3080 (arch=8.6)
+GPU 1                            NVIDIA GeForce RTX 3060 (arch=8.6)
+Driver version                   552.22
+CUDA_HOME                        /usr/local/cuda
+Pillow                           10.3.0
+torchvision                      0.12.0 @/home/xunull/anaconda3/envs/salience_detr/lib/python3.8/site-packages/torchvision
+torchvision arch flags           3.5, 5.0, 6.0, 7.0, 7.5, 8.0, 8.6
+fvcore                           0.1.5.post20221221
+iopath                           0.1.9
+cv2                              4.6.0
+-------------------------------  -----------------------------------------------------------------------------------------
+PyTorch built with:
+  - GCC 7.3
+  - C++ Version: 201402
+  - Intel(R) oneAPI Math Kernel Library Version 2023.1-Product Build 20230303 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v2.5.2 (Git Hash a9302535553c73243c632ad3c4c80beec3d19a1e)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX2
+  - CUDA Runtime 11.3
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86;-gencode;arch=compute_37,code=compute_37
+  - CuDNN 8.2
+  - Magma 2.5.2
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=11.3, CUDNN_VERSION=8.2.0, CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/c++, CXX_FLAGS= -Wno-deprecated -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -fopenmp -DNDEBUG -DUSE_KINETO -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -DEDGE_PROFILER_USE_KINETO -O2 -fPIC -Wno-narrowing -Wall -Wextra -Werror=return-type -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-sign-compare -Wno-unused-parameter -Wno-unused-function -Wno-unused-result -Wno-unused-local-typedefs -Wno-strict-overflow -Wno-strict-aliasing -Wno-error=deprecated-declarations -Wno-stringop-overflow -Wno-psabi -Wno-error=pedantic -Wno-error=redundant-decls -Wno-error=old-style-cast -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_VERSION=1.11.0, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=OFF, USE_MPI=OFF, USE_NCCL=ON, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF,
+[2024-05-15 07:24:17 det.util.misc]: Command line arguments: Namespace(accumulate_steps=1, config_file='configs/train_config.py', dynamo_backend='no', mixed_precision=None, seed=None, use_deterministic_algorithms=False)
+[2024-05-15 07:24:17 det.util.misc]: Contents of args.config_file=configs/train_config.py:
+from torch import optim
+from datasets.coco import CocoDetection
+from transforms import presets
+from optimizer import param_dict
+# Commonly changed training configurations
+num_epochs = 12  # train epochs
+batch_size = 2  # total_batch_size = #GPU x batch_size
+num_workers = 4  # workers for pytorch DataLoader
+pin_memory = True  # whether pin_memory for pytorch DataLoader
+print_freq = 50  # frequency to print logs
+starting_epoch = 0
+max_norm = 0.1  # clip gradient norm
+output_dir = None  # path to save checkpoints, default for None: checkpoints/{model_name}
+find_unused_parameters = False  # useful for debugging distributed training
+# define dataset for train
+coco_path = "/mnt/h/ml_dataset_home/coco"  # /PATH/TO/YOUR/COCODIR
+train_transform = presets.detr  # see transforms/presets to choose a transform
+train_dataset = CocoDetection(
+    img_folder=f"{coco_path}/train2017",
+    ann_file=f"{coco_path}/annotations/instances_train2017.json",
+    transforms=train_transform,
+    train=True,
+)
+test_dataset = CocoDetection(
+    img_folder=f"{coco_path}/val2017",
+    ann_file=f"{coco_path}/annotations/instances_val2017.json",
+    transforms=None,  # the eval_transform is integrated in the model
+)
+# model config to train
+model_path = "configs/salience_detr/salience_detr_resnet50_800_1333.py"
+# specify a checkpoint folder to resume, or a pretrained ".pth" to finetune, for example:
+# checkpoints/salience_detr_resnet50_800_1333/train/2024-03-22-09_38_50
+# checkpoints/salience_detr_resnet50_800_1333/train/2024-03-22-09_38_50/best_ap.pth
+resume_from_checkpoint = None
+learning_rate = 1e-4  # initial learning rate
+optimizer = optim.AdamW(lr=learning_rate, weight_decay=1e-4, betas=(0.9, 0.999))
+lr_scheduler = optim.lr_scheduler.MultiStepLR(milestones=[10], gamma=0.1)
+# This define parameter groups with different learning rate
+param_dicts = param_dict.finetune_backbone_and_linear_projection(lr=learning_rate)
+[2024-05-15 07:24:17 det.util.misc]: Using the random seed: 17447469
+Using [0, 0.5, 0.6299605249474366, 0.7937005259840997, 1.0, 1.2599210498948732, 1.5874010519681994, 2.0, inf] as bins for aspect ratio quantization
+Count of instances per bin: [  104   982 24236  2332  8225 74466  5763  1158]
+Using /home/xunull/.cache/torch_extensions/py38_cu113 as PyTorch extensions root...
+Creating extension directory /home/xunull/.cache/torch_extensions/py38_cu113/MultiScaleDeformableAttention...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /home/xunull/.cache/torch_extensions/py38_cu113/MultiScaleDeformableAttention/build.ninja...
+Building extension module MultiScaleDeformableAttention...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+[1/2] /usr/local/cuda/bin/nvcc  -DTORCH_EXTENSION_NAME=MultiScaleDeformableAttention -DTORCH_API_INCLUDE_EXTENSION_H -DPYBIND11_COMPILER_TYPE=\"_gcc\" -DPYBIND11_STDLIB=\"_libstdcpp\" -DPYBIND11_BUILD_ABI=\"_cxxabi1011\" -isystem /home/xunull/anaconda3/envs/salience_detr/lib/python3.8/site-packages/torch/include -isystem /home/xunull/anaconda3/envs/salience_detr/lib/python3.8/site-packages/torch/include/torch/csrc/api/include -isystem /home/xunull/anaconda3/envs/salience_detr/lib/python3.8/site-packages/torch/include/TH -isystem /home/xunull/anaconda3/envs/salience_detr/lib/python3.8/site-packages/torch/include/THC -isystem /usr/local/cuda/include -isystem /home/xunull/anaconda3/envs/salience_detr/include/python3.8 -D_GLIBCXX_USE_CXX11_ABI=0 -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -gencode=arch=compute_86,code=compute_86 -gencode=arch=compute_86,code=sm_86 --compiler-options '-fPIC' -std=c++14 -c /mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/models/bricks/ops/cuda/ms_deform_attn_cuda.cu -o ms_deform_attn_cuda.cuda.o
+/mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/models/bricks/ops/cuda/ms_deform_im2col_cuda.cuh(250): warning: variable "q_col" was declared but never referenced
+          detected during instantiation of "void ms_deformable_im2col_cuda(cudaStream_t, const scalar_t *, const int64_t *, const int64_t *, const scalar_t *, const scalar_t *, int, int, int, int, int, int, int, scalar_t *) [with scalar_t=double]"
+/mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/models/bricks/ops/cuda/ms_deform_attn_cuda.cu(56): here
+/mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/models/bricks/ops/cuda/ms_deform_im2col_cuda.cuh(751): warning: variable "q_col" was declared but never referenced
+          detected during instantiation of "void ms_deformable_col2im_cuda(cudaStream_t, const scalar_t *, const scalar_t *, const int64_t *, const int64_t *, const scalar_t *, const scalar_t *, int, int, int, int, int, int, int, scalar_t *, scalar_t *, scalar_t *) [with scalar_t=double]"
+/mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/models/bricks/ops/cuda/ms_deform_attn_cuda.cu(126): here
+/mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/models/bricks/ops/cuda/ms_deform_im2col_cuda.cuh(861): warning: variable "q_col" was declared but never referenced
+          detected during instantiation of "void ms_deformable_col2im_cuda(cudaStream_t, const scalar_t *, const scalar_t *, const int64_t *, const int64_t *, const scalar_t *, const scalar_t *, int, int, int, int, int, int, int, scalar_t *, scalar_t *, scalar_t *) [with scalar_t=double]"
+/mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/models/bricks/ops/cuda/ms_deform_attn_cuda.cu(126): here
+/mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/models/bricks/ops/cuda/ms_deform_im2col_cuda.cuh(320): warning: variable "q_col" was declared but never referenced
+          detected during instantiation of "void ms_deformable_col2im_cuda(cudaStream_t, const scalar_t *, const scalar_t *, const int64_t *, const int64_t *, const scalar_t *, const scalar_t *, int, int, int, int, int, int, int, scalar_t *, scalar_t *, scalar_t *) [with scalar_t=double]"
+/mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/models/bricks/ops/cuda/ms_deform_attn_cuda.cu(126): here
+/mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/models/bricks/ops/cuda/ms_deform_im2col_cuda.cuh(425): warning: variable "q_col" was declared but never referenced
+          detected during instantiation of "void ms_deformable_col2im_cuda(cudaStream_t, const scalar_t *, const scalar_t *, const int64_t *, const int64_t *, const scalar_t *, const scalar_t *, int, int, int, int, int, int, int, scalar_t *, scalar_t *, scalar_t *) [with scalar_t=double]"
+/mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/models/bricks/ops/cuda/ms_deform_attn_cuda.cu(126): here
+/mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/models/bricks/ops/cuda/ms_deform_im2col_cuda.cuh(533): warning: variable "q_col" was declared but never referenced
+          detected during instantiation of "void ms_deformable_col2im_cuda(cudaStream_t, const scalar_t *, const scalar_t *, const int64_t *, const int64_t *, const scalar_t *, const scalar_t *, int, int, int, int, int, int, int, scalar_t *, scalar_t *, scalar_t *) [with scalar_t=double]"
+/mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/models/bricks/ops/cuda/ms_deform_attn_cuda.cu(126): here
+/mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/models/bricks/ops/cuda/ms_deform_im2col_cuda.cuh(638): warning: variable "q_col" was declared but never referenced
+          detected during instantiation of "void ms_deformable_col2im_cuda(cudaStream_t, const scalar_t *, const scalar_t *, const int64_t *, const int64_t *, const scalar_t *, const scalar_t *, int, int, int, int, int, int, int, scalar_t *, scalar_t *, scalar_t *) [with scalar_t=double]"
+/mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/models/bricks/ops/cuda/ms_deform_attn_cuda.cu(126): here
+[2/2] c++ ms_deform_attn_cuda.cuda.o -shared -L/home/xunull/anaconda3/envs/salience_detr/lib/python3.8/site-packages/torch/lib -lc10 -lc10_cuda -ltorch_cpu -ltorch_cuda_cu -ltorch_cuda_cpp -ltorch -ltorch_python -L/usr/local/cuda/lib64 -lcudart -o MultiScaleDeformableAttention.so
+Loading extension module MultiScaleDeformableAttention...
+[2024-05-15 07:24:53 det.models.backbones.base_backbone]: Backbone architecture: resnet50
+Downloading: "https://download.pytorch.org/models/resnet50-11ad3fa6.pth" to /home/xunull/.cache/torch/hub/checkpoints/resnet50-11ad3fa6.pth
+100%|██████████| 97.8M/97.8M [00:24<00:00, 4.14MB/s]
+[2024-05-15 07:25:18 det.util.utils]: <All keys matched successfully>
+[2024-05-15 07:25:24 det.__main__]: model parameters: 55858095
+[2024-05-15 07:25:24 det.__main__]: optimizer: AcceleratedOptimizer (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    initial_lr: 0.0001
+    lr: 0.0001
+    maximize: False
+    weight_decay: 0.0001
+Parameter Group 1
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    initial_lr: 1e-05
+    lr: 1e-05
+    maximize: False
+    weight_decay: 0.0001
+Parameter Group 2
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    initial_lr: 1e-05
+    lr: 1e-05
+    maximize: False
+    weight_decay: 0
+Parameter Group 3
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    initial_lr: 1e-05
+    lr: 1e-05
+    maximize: False
+    weight_decay: 0.0001
+Parameter Group 4
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    initial_lr: 1e-05
+    lr: 1e-05
+    maximize: False
+    weight_decay: 0
+Parameter Group 5
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    initial_lr: 0.0001
+    lr: 0.0001
+    maximize: False
+    weight_decay: 0
+)
+[2024-05-15 07:25:24 det.__main__]: lr_scheduler: {'_get_lr_called_within_step': False,
+ '_last_lr': [0.0001, 1e-05, 1e-05, 1e-05, 1e-05, 0.0001],
+ '_step_count': 1,
+ 'base_lrs': [0.0001, 1e-05, 1e-05, 1e-05, 1e-05, 0.0001],
+ 'gamma': 0.1,
+ 'last_epoch': 0,
+ 'milestones': Counter({10: 1}),
+ 'verbose': False}
+[2024-05-15 07:25:24 det.__main__]: Label names is saved to checkpoints/salience_detr_resnet50_800_1333/train/2024-05-15-07_24_14/label_names.txt
+[2024-05-15 07:25:24 det.__main__]: Start training
+[2024-05-15 07:25:31 det.util.engine]: Epoch: [0]  [0/58633]  eta: 2 days, 4:48:35  lr: 0.000000  data_time: 1.0032  iter_time: 3.2425  loss: 72.4044 (72.4044)  loss_class: 0.6164 (0.6164)  loss_bbox: 1.7575 (1.7575)  loss_giou: 1.4436 (1.4436)  loss_class_0: 0.5805 (0.5805)  loss_bbox_0: 1.7695 (1.7695)  loss_giou_0: 1.4558 (1.4558)  loss_class_1: 0.6410 (0.6410)  loss_bbox_1: 1.7178 (1.7178)  loss_giou_1: 1.4611 (1.4611)  loss_class_2: 0.6245 (0.6245)  loss_bbox_2: 1.7322 (1.7322)  loss_giou_2: 1.4454 (1.4454)  loss_class_3: 0.6029 (0.6029)  loss_bbox_3: 1.7398 (1.7398)  loss_giou_3: 1.4454 (1.4454)  loss_class_4: 0.6408 (0.6408)  loss_bbox_4: 1.7299 (1.7299)  loss_giou_4: 1.4436 (1.4436)  loss_class_enc: 0.5738 (0.5738)  loss_bbox_enc: 1.7527 (1.7527)  loss_giou_enc: 1.5013 (1.5013)  loss_class_dn: 0.9911 (0.9911)  loss_bbox_dn: 0.9901 (0.9901)  loss_giou_dn: 1.2817 (1.2817)  loss_class_dn_0: 0.9974 (0.9974)  loss_bbox_dn_0: 0.9901 (0.9901)  loss_giou_dn_0: 1.2817 (1.2817)  loss_class_dn_1: 0.9828 (0.9828)  loss_bbox_dn_1: 0.9901 (0.9901)  loss_giou_dn_1: 1.2817 (1.2817)  loss_class_dn_2: 0.9969 (0.9969)  loss_bbox_dn_2: 0.9901 (0.9901)  loss_giou_dn_2: 1.2817 (1.2817)  loss_class_dn_3: 1.0122 (1.0122)  loss_bbox_dn_3: 0.9901 (0.9901)  loss_giou_dn_3: 1.2817 (1.2817)  loss_class_dn_4: 1.0849 (1.0849)  loss_bbox_dn_4: 0.9901 (0.9901)  loss_giou_dn_4: 1.2817 (1.2817)  loss_salience: 26.0328 (26.0328)  mem: 903  max mem: 4241
+[2024-05-15 07:25:31 accelerate.tracking]: Successfully logged to TensorBoard
+[2024-05-15 07:26:11 det.util.engine]: Epoch: [0]  [50/58633]  eta: 13:50:58  lr: 0.000005  data_time: 0.0029  iter_time: 0.6812  loss: 56.1401 (65.3856)  loss_class: 0.6344 (0.6103)  loss_bbox: 1.2030 (1.5915)  loss_giou: 1.4171 (1.4961)  loss_class_0: 0.6013 (0.6066)  loss_bbox_0: 1.3197 (1.6277)  loss_giou_0: 1.4614 (1.5184)  loss_class_1: 0.7066 (0.6662)  loss_bbox_1: 1.2857 (1.6058)  loss_giou_1: 1.4246 (1.5022)  loss_class_2: 0.7390 (0.6390)  loss_bbox_2: 1.2192 (1.5985)  loss_giou_2: 1.4164 (1.5006)  loss_class_3: 0.6607 (0.6307)  loss_bbox_3: 1.2139 (1.5947)  loss_giou_3: 1.4170 (1.4953)  loss_class_4: 0.6711 (0.6486)  loss_bbox_4: 1.2074 (1.5885)  loss_giou_4: 1.4154 (1.4969)  loss_class_enc: 0.6968 (0.6566)  loss_bbox_enc: 1.3403 (1.6331)  loss_giou_enc: 1.4507 (1.5186)  loss_class_dn: 0.8486 (0.8889)  loss_bbox_dn: 1.1415 (1.1840)  loss_giou_dn: 1.3004 (1.3055)  loss_class_dn_0: 0.8521 (0.8834)  loss_bbox_dn_0: 1.1412 (1.1839)  loss_giou_dn_0: 1.3024 (1.3053)  loss_class_dn_1: 0.8944 (0.9333)  loss_bbox_dn_1: 1.1412 (1.1839)  loss_giou_dn_1: 1.3017 (1.3053)  loss_class_dn_2: 0.9396 (0.9295)  loss_bbox_dn_2: 1.1413 (1.1839)  loss_giou_dn_2: 1.3006 (1.3053)  loss_class_dn_3: 0.8863 (0.9124)  loss_bbox_dn_3: 1.1414 (1.1839)  loss_giou_dn_3: 1.3002 (1.3053)  loss_class_dn_4: 0.9238 (0.9521)  loss_bbox_dn_4: 1.1415 (1.1839)  loss_giou_dn_4: 1.2998 (1.3055)  loss_salience: 6.4284 (18.7247)  mem: 910  max mem: 7219
+[2024-05-15 07:26:11 accelerate.tracking]: Successfully logged to TensorBoard
+[2024-05-15 07:26:53 det.util.engine]: Epoch: [0]  [100/58633]  eta: 13:48:34  lr: 0.000010  data_time: 0.0028  iter_time: 0.8048  loss: 47.4321 (57.6889)  loss_class: 0.7777 (0.7108)  loss_bbox: 1.5586 (1.5401)  loss_giou: 1.4114 (1.4381)  loss_class_0: 0.6149 (0.6640)  loss_bbox_0: 1.5446 (1.5880)  loss_giou_0: 1.4437 (1.4749)  loss_class_1: 0.6379 (0.7173)  loss_bbox_1: 1.5248 (1.5681)  loss_giou_1: 1.4428 (1.4573)  loss_class_2: 0.6687 (0.7109)  loss_bbox_2: 1.5290 (1.5573)  loss_giou_2: 1.4247 (1.4497)  loss_class_3: 0.7141 (0.7082)  loss_bbox_3: 1.5389 (1.5513)  loss_giou_3: 1.4287 (1.4436)  loss_class_4: 0.7230 (0.7172)  loss_bbox_4: 1.5555 (1.5379)  loss_giou_4: 1.4019 (1.4440)  loss_class_enc: 0.6640 (0.7194)  loss_bbox_enc: 1.5549 (1.5994)  loss_giou_enc: 1.4413 (1.4751)  loss_class_dn: 0.7599 (0.8408)  loss_bbox_dn: 1.1356 (1.2039)  loss_giou_dn: 1.3025 (1.3083)  loss_class_dn_0: 0.7411 (0.8473)  loss_bbox_dn_0: 1.1434 (1.1991)  loss_giou_dn_0: 1.2976 (1.3071)  loss_class_dn_1: 0.7358 (0.8658)  loss_bbox_dn_1: 1.1383 (1.1993)  loss_giou_dn_1: 1.2950 (1.3066)  loss_class_dn_2: 0.7423 (0.8719)  loss_bbox_dn_2: 1.1339 (1.2001)  loss_giou_dn_2: 1.2917 (1.3063)  loss_class_dn_3: 0.7282 (0.8617)  loss_bbox_dn_3: 1.1331 (1.2009)  loss_giou_dn_3: 1.2901 (1.3065)  loss_class_dn_4: 0.7501 (0.8890)  loss_bbox_dn_4: 1.1341 (1.2024)  loss_giou_dn_4: 1.2934 (1.3074)  loss_salience: 1.6226 (11.3920)  mem: 901  max mem: 7219
+[2024-05-15 07:26:54 accelerate.tracking]: Successfully logged to TensorBoard

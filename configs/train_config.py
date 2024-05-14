@@ -17,7 +17,7 @@ output_dir = None  # path to save checkpoints, default for None: checkpoints/{mo
 find_unused_parameters = False  # useful for debugging distributed training
 
 # define dataset for train
-coco_path = "data/coco"  # /PATH/TO/YOUR/COCODIR
+coco_path = "/mnt/h/ml_dataset_home/coco"  # /PATH/TO/YOUR/COCODIR
 train_transform = presets.detr  # see transforms/presets to choose a transform
 train_dataset = CocoDetection(
     img_folder=f"{coco_path}/train2017",
