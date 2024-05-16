@@ -8,6 +8,7 @@ class DETRBaseTransformer(nn.Module):
     such as DeformableTransformer, DabTransformer, DINOTransformer, AlignTransformer.
 
     """
+
     def __init__(self, num_feature_levels, embed_dim):
         super().__init__()
         self.embed_dim = embed_dim
@@ -18,6 +19,7 @@ class DETRBaseTransformer(nn.Module):
     def _init_weights_detr_transformer(self):
         nn.init.normal_(self.level_embeds)
 
+    # 将list形式的多层拉平 -> [bs,s]
     @staticmethod
     def flatten_multi_level(multi_level_elements):
         multi_level_elements = torch.cat([e.flatten(-2) for e in multi_level_elements], -1)  # (b, [c], s)
@@ -61,6 +63,7 @@ class TwostageTransformer(DETRBaseTransformer):
     such as DeformableTransformer, DabTransformer, DINOTransformer, AlignTransformer.
 
     """
+
     def __init__(self, num_feature_levels, embed_dim):
         super().__init__(num_feature_levels, embed_dim)
         self.enc_output = nn.Linear(embed_dim, embed_dim)
@@ -81,32 +84,34 @@ class TwostageTransformer(DETRBaseTransformer):
             spatial_shapes = [b.unbind(0) for b in spatial_shapes.unbind(0)]
         else:
             # use list to avoid small kernel launching when indexing spatial shapes
-            spatial_shapes = spatial_shapes.tolist()
+            spatial_shapes = spatial_shapes.tolist()  # 4,2的tensor -> 4个[2]的list
 
         for lvl, (h, w) in enumerate(spatial_shapes):
-            mask_flatten = memory_padding_mask[:, cur:(cur + h * w)].view(n, h, w, 1)
-            valid_h = torch.sum(~mask_flatten[:, :, 0, 0], 1)
-            valid_w = torch.sum(~mask_flatten[:, 0, :, 0], 1)
-
+            mask_flatten = memory_padding_mask[:, cur:(cur + h * w)].view(n, h, w, 1)  # [bs,h, w, 1] 取出对应特征图大小的mask
+            valid_h = torch.sum(~mask_flatten[:, :, 0, 0], 1)  # 各个image的有效的高度
+            valid_w = torch.sum(~mask_flatten[:, 0, :, 0], 1)  # 各个image的有效的宽度
+            # 生成网格点
             grid_y, grid_x = torch.meshgrid(
                 torch.linspace(0, h - 1, h, dtype=torch.float32, device=memory.device),
                 torch.linspace(0, w - 1, w, dtype=torch.float32, device=memory.device),
                 indexing="ij",
             )
             grid = torch.stack([grid_x, grid_y], -1)  # [h, w, 2]
-            scale = torch.stack([valid_w, valid_h], -1).view(n, 1, 1, 2)
-            grid = (grid.expand(n, -1, -1, -1) + 0.5) / scale  # [n, h, w, 2]
-            wh = torch.ones_like(grid) * 0.05 * 2.0**lvl
-            proposal = torch.cat([grid, wh], -1).view(n, -1, 4)
+            scale = torch.stack([valid_w, valid_h], -1).view(n, 1, 1, 2)  # [bs, 1, 1, 2]
+            grid = (grid.expand(n, -1, -1, -1) + 0.5) / scale  # [n, h, w, 2]  0.5是为了取中心点 归一化的坐标
+            wh = torch.ones_like(grid) * 0.05 * 2.0 ** lvl  # 宽 高 各个level上box的宽高
+            proposal = torch.cat([grid, wh], -1).view(n, -1, 4)  # x y w h 四个值
             proposals.append(proposal)
             cur += h * w
         output_proposals = torch.cat(proposals, 1)
         output_proposals_valid = ((output_proposals > 0.01) & (output_proposals < 0.99)).all(-1, keepdim=True)
         output_proposals = torch.log(output_proposals / (1 - output_proposals))  # inverse_sigmoid
+        # mask的位置的proposal设置为inf,以及上面条件取反（也就是<0.01 和 >0.99的位置）设置为inf
         output_proposals.masked_fill_(
             memory_padding_mask.unsqueeze(-1) | ~output_proposals_valid, float("inf")
         )
-
+        # 将mask的位置设为0 然后将有效的位置保留，无效的位置设为0
         output_memory = memory * (~memory_padding_mask.unsqueeze(-1)) * (output_proposals_valid)
+        # linear和norm
         output_memory = self.enc_output_norm(self.enc_output(output_memory))
         return output_memory, output_proposals

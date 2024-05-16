@@ -81,6 +81,7 @@ class PositionEmbeddingLearned(nn.Module):
         h, w = mask.shape[-2:]
         i = torch.arange(w, device=mask.device)
         j = torch.arange(h, device=mask.device)
+        # x embedding
         x_emb = self.col_embed(i)
         y_emb = self.row_embed(j)
         pos = (

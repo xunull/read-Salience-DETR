@@ -206,7 +206,7 @@ class RepVGGPluXNetwork(nn.Module):
     
     def forward(self, x: OrderedDict):
         keys = list(x.keys())
-        x = list(x.values())
+        x = list(x.values()) # [bs, c, h, w] 各层的memory
         assert len(x) == len(self.layer_blocks) + 1
         
         # top down path
@@ -214,14 +214,14 @@ class RepVGGPluXNetwork(nn.Module):
         inner_outs = [results[-1]]
         for idx in range(len(results) - 1, 0, -1):
             feat_high = inner_outs[0]
-            feat_low = results[idx - 1]
+            feat_low = results[idx - 1] # 比上一个低一层的特征
             feat_high = self.lateral_convs[idx - 1](feat_high)
             inner_outs[0] = feat_high
             upsample_feat = F.interpolate(
                 feat_high,
                 size=feat_low.shape[-2:],
                 mode="nearest",
-            )
+            ) # 上采样
             inner_out = self.layer_blocks[idx - 1](torch.cat([upsample_feat, feat_low], dim=1))
             inner_outs.insert(0, inner_out)
         

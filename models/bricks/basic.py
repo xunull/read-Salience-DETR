@@ -26,6 +26,7 @@ class MLP(nn.Module):
         return x
 
 
+# se模块
 class SqueezeAndExcitation(nn.Module):
     def __init__(self, channels, reduction=16):
         super().__init__()
@@ -72,11 +73,11 @@ class ContextBlock(nn.Module):
     """
 
     def __init__(
-        self,
-        in_channels: int,
-        ratio: float,
-        pooling_type: str = "att",
-        fusion_types: tuple = ("channel_add",),
+            self,
+            in_channels: int,
+            ratio: float,
+            pooling_type: str = "att",
+            fusion_types: tuple = ("channel_add",),
     ):
         super().__init__()
         assert pooling_type in ["avg", "att"]

@@ -170,6 +170,7 @@ class SetCriterion(nn.Module):
         return losses
 
 
+# 修改了labels相关的计算
 class HybridSetCriterion(SetCriterion):
     def loss_labels(self, outputs, targets, num_boxes, indices, **kwargs):
         assert "pred_boxes" in outputs
@@ -199,6 +200,8 @@ class HybridSetCriterion(SetCriterion):
         target_score[idx] = iou_score
 
         loss_class = (
+            # 正常的使用的是sigmoid_focal_loss
+            # 这里相比其多了target_score参数
             vari_sigmoid_focal_loss(
                 src_logits,
                 target_classes_onehot,

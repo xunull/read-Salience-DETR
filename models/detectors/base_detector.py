@@ -19,12 +19,13 @@ from util.utils import get_world_size, is_dist_avail_and_initialized
 
 class EvalResize(nn.Module):
     """Resize transform friendly to ONNX and torchscript"""
+
     def __init__(
-        self,
-        min_size: int,
-        max_size: Optional[int] = None,
-        interpolation: Union[InterpolationMode, int] = InterpolationMode.BILINEAR,
-        antialias: Optional[Union[str, bool]] = "warn",
+            self,
+            min_size: int,
+            max_size: Optional[int] = None,
+            interpolation: Union[InterpolationMode, int] = InterpolationMode.BILINEAR,
+            antialias: Optional[Union[str, bool]] = "warn",
     ):
         super().__init__()
         assert isinstance(min_size, int) and isinstance(max_size, int)
@@ -132,6 +133,9 @@ class BaseDetector(nn.Module):
 
     @staticmethod
     def query_original_sizes(images):
+        """
+        返回原始图像的尺寸
+        """
         if torchvision._is_tracing():
             from torch.onnx import operators
             if isinstance(images, torch.Tensor):

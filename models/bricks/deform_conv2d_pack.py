@@ -10,15 +10,15 @@ class DeformConv2dPack(nn.Module):
     """This is a pack of deformable convolution that can be used as normal convolution"""
 
     def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        kernel_size: Union[int, Tuple[int]],
-        stride: int = 1,
-        padding: int = 0,
-        dilation: int = 1,
-        groups: int = 1,
-        bias: Union[bool, str] = True,
+            self,
+            in_channels: int,
+            out_channels: int,
+            kernel_size: Union[int, Tuple[int]],
+            stride: int = 1,
+            padding: int = 0,
+            dilation: int = 1,
+            groups: int = 1,
+            bias: Union[bool, str] = True,
     ):
         super().__init__()
         if isinstance(kernel_size, int):

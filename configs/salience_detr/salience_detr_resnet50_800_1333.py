@@ -43,7 +43,7 @@ neck = ChannelMapper(
     out_channels=embed_dim,
     num_outs=num_feature_levels,
 )
-
+# transformer里多了一层neck
 transformer = SalienceTransformer(
     encoder=SalienceTransformerEncoder(
         encoder_layer=SalienceTransformerEncoderLayer(
@@ -82,6 +82,7 @@ transformer = SalienceTransformer(
     num_feature_levels=num_feature_levels,
     two_stage_num_proposals=num_queries,
     level_filter_ratio=(0.4, 0.8, 1.0, 1.0),
+    # focus detr, 对应各层encoder使用
     layer_filter_ratio=(1.0, 0.8, 0.6, 0.6, 0.4, 0.2),
 )
 
@@ -95,6 +96,7 @@ weight_dict.update({
     for k, v in weight_dict.items()
 })
 weight_dict.update({"loss_class_enc": 1, "loss_bbox_enc": 5, "loss_giou_enc": 2})
+# 多的一个loss
 weight_dict.update({"loss_salience": 2})
 
 criterion = HybridSetCriterion(num_classes, matcher=matcher, weight_dict=weight_dict, alpha=0.25, gamma=2.0)

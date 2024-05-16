@@ -7,18 +7,18 @@ from models.bricks.misc import Conv2dNormActivation
 
 class ChannelMapper(nn.Module):
     def __init__(
-        self,
-        in_channels: List[int],
-        out_channels: int,
-        num_outs: int,
-        kernel_size: int = 1,
-        stride: int = 1,
-        groups: int = 1,
-        norm_layer=partial(nn.GroupNorm, 32),
-        activation_layer: nn.Module = None,
-        dilation: int = 1,
-        inplace: bool = True,
-        bias: bool = None,
+            self,
+            in_channels: List[int],
+            out_channels: int,
+            num_outs: int,
+            kernel_size: int = 1,
+            stride: int = 1,
+            groups: int = 1,
+            norm_layer=partial(nn.GroupNorm, 32),
+            activation_layer: nn.Module = None,
+            dilation: int = 1,
+            inplace: bool = True,
+            bias: bool = None,
     ):
         self.in_channels = in_channels
         super().__init__()
@@ -57,9 +57,9 @@ class ChannelMapper(nn.Module):
                 )
             )
             in_channel = out_channels
-        
+
         self.init_weights()
-    
+
     def init_weights(self):
         # initialize modules
         for layer in self.modules():
@@ -67,13 +67,14 @@ class ChannelMapper(nn.Module):
                 nn.init.xavier_uniform_(layer.weight, gain=1)
                 if layer.bias:
                     nn.init.constant_(layer.bias, 0)
-    
+
     def forward(self, inputs):
         inputs = list(inputs.values())
         assert len(inputs) == len(self.in_channels)
-        outs = [self.convs[i](inputs[i]) for i in range(len(inputs))]
+        outs = [self.convs[i](inputs[i]) for i in range(len(inputs))]  # 从各个维度 -> 256
         for i in range(len(inputs), len(self.convs)):
             if i == len(inputs):
+                # backbone最后一层的输出 作为进入transformer额外多的层的的第一个
                 outs.append(self.convs[i](inputs[-1]))
             else:
                 outs.append(self.convs[i](outs[-1]))

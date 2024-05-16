@@ -1,5 +1,3 @@
-import sys; print('Python %s on %s' % (sys.version, sys.platform))
-/home/xunull/anaconda3/bin/conda run -n salience_detr --no-capture-output python /home/xunull/.pycharm_helpers/pydev/pydevd.py --multiprocess --qt-support=auto --client 127.0.0.1 --port 40315 --file /mnt/d/xunull-repository/AiGitRepos/detectrion-group/Salience-DETR/main.py
 Connected to pydev debugger (build 241.15989.155)
 loading annotations into memory...
 Done (t=23.43s)
